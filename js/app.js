@@ -64,7 +64,7 @@
   const map = L.map("map", { zoomControl: true, attributionControl: true })
     .setView([28.6, -97.4], 6);
 
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png", {
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a> · parody UI, not Palantir',
     subdomains: "abcd",
     maxZoom: 12,
@@ -297,8 +297,7 @@
         return;
       }
       enterMode("MOCK");
-    } catch (err) {
-      logEvent(`Feed query failed (${err.message}) — falling back to sim.`, "ev-alert");
+    } catch {
       enterMode("MOCK");
     }
   }
@@ -335,6 +334,22 @@
         : 'Query not recognized by this demo terminal. Type <span class="mono hl">help</span> for supported prompts, or take it to the sub — a human analyst (redditor) will oblige.');
     }, 450);
   });
+
+  /* ---------------- collapsible overlays ---------------- */
+  function wireCollapse(btnId, targetSel, collapsedDefault) {
+    const btn = $(btnId);
+    const target = document.querySelector(targetSel);
+    const set = (collapsed) => {
+      target.classList.toggle("collapsed", collapsed);
+      btn.textContent = collapsed ? "+" : "−";
+      btn.setAttribute("aria-expanded", String(!collapsed));
+    };
+    btn.addEventListener("click", () => set(!target.classList.contains("collapsed")));
+    set(collapsedDefault);
+  }
+  const isSmallScreen = window.matchMedia("(max-width: 980px)").matches;
+  wireCollapse("dossier-toggle", ".map-overlay-tr .overlay-card", isSmallScreen);
+  wireCollapse("eventlog-toggle", ".eventlog", isSmallScreen);
 
   /* ---------------- boot ---------------- */
   setBadge("CONNECTING");
