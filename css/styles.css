@@ -104,48 +104,36 @@ a:hover { text-decoration: underline; }
 .badge-mock { color: var(--amber); border-color: rgba(232,197,71,.45); background: rgba(232,197,71,.07); }
 @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .25; } }
 
-/* ---------- layout ---------- */
+/* ---------- layout: the map IS the app ---------- */
 .layout {
+  position: relative;
   flex: 1 1 auto;
-  display: grid;
-  grid-template-columns: 56px minmax(340px, 430px) 1fr;
   min-height: 0;
 }
 
-/* ---------- left rail ---------- */
-.rail {
-  background: var(--bg);
-  border-right: 1px solid var(--border);
-  display: flex; flex-direction: column;
-  justify-content: space-between;
-  padding: 18px 8px;
-  overflow: hidden;
-}
-.rail-top {
-  writing-mode: vertical-rl; transform: rotate(180deg);
-  font-family: var(--mono); font-size: 9px; letter-spacing: 0.22em;
-  color: var(--ink-3); text-transform: uppercase;
-}
-.rail-title {
-  writing-mode: vertical-rl; transform: rotate(180deg);
-  font-weight: 700; font-size: 13px; letter-spacing: 0.2em;
-  color: var(--ink-2); line-height: 1.7;
-}
-.rail-bottom { font-weight: 700; font-size: 11px; letter-spacing: 0.1em; color: var(--ink-3); }
-
-/* ---------- panels ---------- */
+/* ---------- floating panels ---------- */
 .panel {
-  background: var(--surface);
-  border-right: 1px solid var(--border);
+  position: absolute;
+  z-index: 1100;
+  top: 12px; left: 12px; bottom: 34px;
+  width: 430px;
+  max-width: calc(100% - 350px);
   display: flex; flex-direction: column;
   min-height: 0;
+  background: rgba(24, 32, 38, 0.92);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid var(--border-hi);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.55);
 }
 .panel-head {
   flex: 0 0 auto;
   display: flex; align-items: center; justify-content: space-between; gap: 10px;
   padding: 10px 14px;
   border-bottom: 1px solid var(--border);
-  background: var(--surface-2);
+  background: rgba(31, 43, 51, 0.9);
 }
 .panel-title { font-weight: 600; font-size: 12px; letter-spacing: 0.02em; }
 .panel-meta { font-size: 10px; color: var(--ink-3); letter-spacing: 0.12em; }
@@ -295,7 +283,7 @@ a:hover { text-decoration: underline; }
 .fine { font-size: 11.5px; color: var(--ink-3); }
 
 /* ---------- map ---------- */
-.mapwrap { position: relative; min-height: 0; }
+.mapwrap { position: absolute; inset: 0; }
 #map { position: absolute; inset: 0; background: #0b1014; }
 
 /* leaflet chrome, re-skinned */
@@ -336,7 +324,13 @@ a:hover { text-decoration: underline; }
 /* ---------- map overlays ---------- */
 .map-overlay { position: absolute; z-index: 800; }
 .map-overlay-tr { top: 12px; right: 12px; width: 290px; max-width: calc(100% - 24px); }
-.map-overlay-bottom { left: 12px; right: 12px; bottom: 12px; pointer-events: none; }
+/* event log floats to the right of the terminal panel */
+.map-overlay-bottom {
+  left: 456px; right: auto; bottom: 12px;
+  width: min(560px, calc(100% - 640px));
+  min-width: 280px;
+  pointer-events: none;
+}
 .map-overlay-bottom .eventlog { pointer-events: auto; }
 
 .overlay-card {
@@ -437,30 +431,48 @@ a:hover { text-decoration: underline; }
   .tabs::-webkit-scrollbar { display: none; }
   .tab { padding: 9px 12px 8px; white-space: nowrap; }
 
-  .layout { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
-  .rail { display: none; }
-
-  /* map first, terminal fills the rest exactly */
-  .mapwrap { order: -1; flex: 0 0 42%; min-height: 240px; }
+  /* terminal becomes a bottom sheet over the full-screen map;
+     tap the header (grab bar) to cycle peek → half → full */
   .panel {
-    border-right: none; border-top: 1px solid var(--border);
-    flex: 1 1 auto; min-height: 0;
+    top: auto; left: 0; right: 0; bottom: 0;
+    width: auto; max-width: none;
+    height: calc(48px + env(safe-area-inset-bottom));
+    border: none; border-top: 1px solid var(--border-hi);
+    border-radius: 12px 12px 0 0;
+    transition: height 0.28s ease;
+    box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.55);
   }
-  .panel-head { padding: 8px 12px; }
+  .layout.sheet-half .panel { height: 48dvh; }
+  .layout.sheet-full .panel { height: calc(100% - 10px); }
+  .panel-head {
+    position: relative;
+    padding: 15px 14px 10px;
+    min-height: 48px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .panel-head::before {
+    content: "";
+    position: absolute; top: 5px; left: 50%;
+    transform: translateX(-50%);
+    width: 38px; height: 4px; border-radius: 2px;
+    background: var(--border-hi);
+  }
 
   /* keep the ask box clear of the iPhone home indicator */
   .ask { padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); }
 
-  /* compact overlays (start collapsed via JS) */
+  /* compact dossier chip (starts collapsed via JS); no event log strip */
   .map-overlay-tr { top: 8px; right: 8px; width: auto; max-width: calc(100% - 70px); }
   .overlay-card { padding: 8px 10px; }
   .dossier-reg { font-size: 16px; }
   .dossier-type { font-size: 9px; }
   .stat { padding: 5px 8px; }
   .stat-value { font-size: 11px; }
-  .map-overlay-bottom { left: 8px; right: 8px; bottom: 22px; }
-  .eventlog { max-width: none; padding: 6px 10px 8px; }
-  .eventlog-rows { max-height: 56px; font-size: 9.5px; }
+  .map-overlay-bottom { display: none; }
+
+  /* keep leaflet attribution above the collapsed sheet */
+  .leaflet-bottom { bottom: calc(48px + env(safe-area-inset-bottom)); }
 
   /* 16px stops iOS Safari from zooming the page on focus */
   .ask-input { font-size: 16px; }

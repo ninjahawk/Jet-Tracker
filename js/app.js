@@ -35,12 +35,30 @@
   setInterval(() => { $("zulu-clock").textContent = zulu(); }, 1000);
   $("zulu-clock").textContent = zulu();
 
+  /* ---------------- bottom sheet (mobile) ---------------- */
+  const layout = document.querySelector(".layout");
+  const mqMobile = window.matchMedia("(max-width: 980px)");
+  const SHEET_STATES = ["sheet-collapsed", "sheet-half", "sheet-full"];
+  function setSheet(state) {
+    layout.classList.remove(...SHEET_STATES);
+    layout.classList.add(state);
+  }
+  function cycleSheet() {
+    const cur = SHEET_STATES.findIndex((s) => layout.classList.contains(s));
+    setSheet(SHEET_STATES[(cur + 1) % SHEET_STATES.length]);
+  }
+  if (mqMobile.matches) setSheet("sheet-collapsed");
+  document.querySelectorAll(".panel-head").forEach((head) => {
+    head.addEventListener("click", () => { if (mqMobile.matches) cycleSheet(); });
+  });
+
   /* ---------------- tabs ---------------- */
   const panes = { investigations: $("pane-investigations"), watchlist: $("pane-watchlist"), about: $("pane-about") };
   document.querySelectorAll(".tab").forEach((btn) => {
     btn.addEventListener("click", () => {
       document.querySelectorAll(".tab").forEach((b) => b.classList.toggle("active", b === btn));
       Object.entries(panes).forEach(([k, el]) => el.classList.toggle("hidden", k !== btn.dataset.tab));
+      if (mqMobile.matches && layout.classList.contains("sheet-collapsed")) setSheet("sheet-half");
     });
   });
 
@@ -61,8 +79,9 @@
   })();
 
   /* ---------------- map ---------------- */
-  const map = L.map("map", { zoomControl: true, attributionControl: true })
+  const map = L.map("map", { zoomControl: false, attributionControl: true })
     .setView([28.6, -97.4], 6);
+  L.control.zoom({ position: "bottomright" }).addTo(map);
 
   L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a> · parody UI, not Palantir',
@@ -334,6 +353,15 @@
         : 'Query not recognized by this demo terminal. Type <span class="mono hl">help</span> for supported prompts, or take it to the sub — a human analyst (redditor) will oblige.');
     }, 450);
   });
+
+  /* ---------------- coordinate readout ---------------- */
+  const coordsEl = $("map-coords");
+  function showCoords(latlng) {
+    coordsEl.textContent = fmtPos(latlng.lat, latlng.lng);
+  }
+  map.on("mousemove", (e) => showCoords(e.latlng));
+  map.on("move", () => showCoords(map.getCenter()));
+  showCoords(map.getCenter());
 
   /* ---------------- collapsible overlays ---------------- */
   function wireCollapse(btnId, targetSel, collapsedDefault) {
