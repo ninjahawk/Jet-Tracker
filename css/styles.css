@@ -345,8 +345,30 @@ a:hover { text-decoration: underline; }
   padding: 10px 12px;
   backdrop-filter: blur(3px);
 }
-.overlay-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.overlay-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; gap: 8px; }
 .overlay-head .mono { font-size: 9px; }
+.overlay-head-right { display: inline-flex; align-items: center; gap: 8px; }
+.collapse-btn {
+  appearance: none; cursor: pointer;
+  width: 20px; height: 20px; line-height: 1;
+  background: var(--surface-3);
+  border: 1px solid var(--border-hi);
+  border-radius: 3px;
+  color: var(--ink-2);
+  font: 600 13px var(--mono);
+  padding: 0;
+}
+.collapse-btn:hover { color: var(--ink); border-color: var(--blue); }
+
+/* collapsed states */
+.overlay-card.collapsed .stat-grid,
+.overlay-card.collapsed .overlay-links,
+.overlay-card.collapsed .dossier-type { display: none; }
+.overlay-card.collapsed .overlay-head { margin-bottom: 6px; }
+.overlay-card.collapsed .dossier-id { margin-bottom: 0; }
+.overlay-card.collapsed .dossier-reg { font-size: 14px; }
+.eventlog.collapsed .eventlog-rows { display: none; }
+.eventlog.collapsed .eventlog-head { margin-bottom: 0; }
 .dossier-id { margin-bottom: 10px; }
 .dossier-reg { display: block; font-size: 20px; font-weight: 600; color: var(--amber); letter-spacing: 0.06em; }
 .dossier-type { font-size: 10px; color: var(--ink-3); letter-spacing: 0.06em; }
@@ -382,17 +404,56 @@ a:hover { text-decoration: underline; }
 
 /* ---------- responsive ---------- */
 @media (max-width: 980px) {
-  body { overflow: auto; }
-  .layout {
-    grid-template-columns: 1fr;
-    grid-auto-rows: auto;
+  body { overflow: auto; height: auto; min-height: 100dvh; }
+
+  .class-banner {
+    font-size: 8px; letter-spacing: 0.08em;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
+
+  .topbar {
+    flex-wrap: wrap; height: auto;
+    padding: 6px 10px 0; row-gap: 0; column-gap: 10px;
+  }
+  .topbar-left { display: contents; }
+  .brand { order: 1; padding-bottom: 6px; }
+  .brand-name { font-size: 13px; }
+  .brand-sub, .reddit-link { display: none; }
+  .topbar-right { order: 2; margin-left: auto; padding-bottom: 6px; gap: 10px; }
+  .badge { font-size: 9px; padding: 2px 6px; white-space: nowrap; }
+  .zulu { font-size: 11px; }
+  .tabs {
+    order: 3; width: 100%;
+    overflow-x: auto; scrollbar-width: none;
+    border-top: 1px solid var(--border);
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { padding: 9px 12px 8px; white-space: nowrap; }
+
+  .layout { display: flex; flex-direction: column; }
   .rail { display: none; }
-  .panel { border-right: none; border-bottom: 1px solid var(--border); max-height: 46vh; }
-  .mapwrap { height: 60vh; }
-  #map { position: absolute; }
-  .map-overlay-tr { width: 250px; }
-  .tabs { overflow-x: auto; }
-  .brand-sub { display: none; }
-  .reddit-link { display: none; }
+
+  /* map first, feed below */
+  .mapwrap { order: -1; flex: none; height: 46dvh; min-height: 300px; }
+  .panel {
+    border-right: none; border-top: 1px solid var(--border);
+    flex: 1 1 auto; min-height: 50dvh;
+  }
+
+  /* compact overlays (start collapsed via JS) */
+  .map-overlay-tr { top: 8px; right: 8px; width: auto; max-width: calc(100% - 70px); }
+  .overlay-card { padding: 8px 10px; }
+  .dossier-reg { font-size: 16px; }
+  .dossier-type { font-size: 9px; }
+  .stat { padding: 5px 8px; }
+  .stat-value { font-size: 11px; }
+  .map-overlay-bottom { left: 8px; right: 8px; bottom: 22px; }
+  .eventlog { max-width: none; padding: 6px 10px 8px; }
+  .eventlog-rows { max-height: 56px; font-size: 9.5px; }
+
+  /* 16px stops iOS Safari from zooming the page on focus */
+  .ask-input { font-size: 16px; }
+
+  .feed { padding: 10px; }
+  .watchlist-body, .about-body { padding: 10px; }
 }

@@ -140,7 +140,10 @@
         <div class="overlay-card">
           <div class="overlay-head">
             <span class="chip chip-blue">TARGET DOSSIER</span>
-            <span class="mono muted" id="dossier-updated">—</span>
+            <span class="overlay-head-right">
+              <span class="mono muted" id="dossier-updated">—</span>
+              <button class="collapse-btn" id="dossier-toggle" aria-label="Collapse dossier" aria-expanded="true">−</button>
+            </span>
           </div>
           <div class="dossier-id">
             <span class="dossier-reg mono">N628TS</span>
@@ -167,7 +170,10 @@
         <div class="eventlog">
           <div class="eventlog-head">
             <span class="chip chip-dim">EVENT LOG</span>
-            <span class="mono muted" id="eventlog-mode"></span>
+            <span class="overlay-head-right">
+              <span class="mono muted" id="eventlog-mode"></span>
+              <button class="collapse-btn" id="eventlog-toggle" aria-label="Collapse event log" aria-expanded="true">−</button>
+            </span>
           </div>
           <div class="eventlog-rows mono" id="eventlog"></div>
         </div>

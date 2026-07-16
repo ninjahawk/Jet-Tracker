@@ -40,12 +40,9 @@ const G700_WATCHLIST = [
 
 /* Points of interest rendered on the tactical map */
 const POIS = [
-  { name: "GIGA TEXAS",      lat: 30.2226, lon: -97.6171 },
-  { name: "KAUS / AUSTIN",   lat: 30.1975, lon: -97.6664 },
-  { name: "STARBASE",        lat: 25.9972, lon: -97.1560 },
-  { name: "KBRO / BROWNSVILLE", lat: 25.9068, lon: -97.4259 },
-  { name: "HAWTHORNE / SPACEX HQ", lat: 33.9207, lon: -118.3278 },
-  { name: "KVNY / VAN NUYS", lat: 34.2098, lon: -118.4890 },
+  { name: "GIGA TEXAS / KAUS", lat: 30.2226, lon: -97.6171 },
+  { name: "STARBASE / KBRO",   lat: 25.9972, lon: -97.1560 },
+  { name: "HAWTHORNE HQ",      lat: 33.9207, lon: -118.3278 },
   { name: "KIAD / WASHINGTON", lat: 38.9445, lon: -77.4558 },
 ];
 
