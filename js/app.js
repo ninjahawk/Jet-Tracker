@@ -353,6 +353,7 @@
 
   /* ---------------- boot ---------------- */
   setBadge("CONNECTING");
+  simStep(); // plot a position immediately; live data replaces it if it arrives
   addMsg("ai", `Terminal initialized · ${zuluStamp()}. Standing watch on <span class="mono hl">${TARGET.reg}</span> (${TARGET.type}, ICAO <span class="mono">${TARGET.icao.toUpperCase()}</span>).`);
   logEvent("Terminal boot complete.");
   logEvent(`Querying public ADS-B feed for ${TARGET.reg}…`);

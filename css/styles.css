@@ -26,9 +26,10 @@
 }
 
 * { box-sizing: border-box; }
-html, body { height: 100%; }
+html { height: 100%; }
 body {
   margin: 0;
+  height: 100dvh;
   background: var(--bg);
   color: var(--ink);
   font-family: var(--sans);
@@ -360,13 +361,19 @@ a:hover { text-decoration: underline; }
 }
 .collapse-btn:hover { color: var(--ink); border-color: var(--blue); }
 
-/* collapsed states */
+/* collapsed states — dossier folds to a single row */
+.overlay-card.collapsed {
+  display: flex; align-items: center; gap: 10px;
+  padding: 6px 9px;
+}
 .overlay-card.collapsed .stat-grid,
 .overlay-card.collapsed .overlay-links,
-.overlay-card.collapsed .dossier-type { display: none; }
-.overlay-card.collapsed .overlay-head { margin-bottom: 6px; }
-.overlay-card.collapsed .dossier-id { margin-bottom: 0; }
-.overlay-card.collapsed .dossier-reg { font-size: 14px; }
+.overlay-card.collapsed .dossier-type,
+.overlay-card.collapsed #dossier-updated { display: none; }
+.overlay-card.collapsed .overlay-head { display: contents; }
+.overlay-card.collapsed .overlay-head-right { order: 3; margin-left: auto; }
+.overlay-card.collapsed .dossier-id { order: 2; margin: 0; }
+.overlay-card.collapsed .dossier-reg { display: inline; font-size: 13px; }
 .eventlog.collapsed .eventlog-rows { display: none; }
 .eventlog.collapsed .eventlog-head { margin-bottom: 0; }
 .dossier-id { margin-bottom: 10px; }
@@ -404,8 +411,8 @@ a:hover { text-decoration: underline; }
 
 /* ---------- responsive ---------- */
 @media (max-width: 980px) {
-  body { overflow: auto; height: auto; min-height: 100dvh; }
-
+  /* fixed app frame: header / map / terminal — no page scroll,
+     the feed and tables scroll inside their own panes */
   .class-banner {
     font-size: 8px; letter-spacing: 0.08em;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -430,15 +437,19 @@ a:hover { text-decoration: underline; }
   .tabs::-webkit-scrollbar { display: none; }
   .tab { padding: 9px 12px 8px; white-space: nowrap; }
 
-  .layout { display: flex; flex-direction: column; }
+  .layout { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
   .rail { display: none; }
 
-  /* map first, feed below */
-  .mapwrap { order: -1; flex: none; height: 46dvh; min-height: 300px; }
+  /* map first, terminal fills the rest exactly */
+  .mapwrap { order: -1; flex: 0 0 42%; min-height: 240px; }
   .panel {
     border-right: none; border-top: 1px solid var(--border);
-    flex: 1 1 auto; min-height: 50dvh;
+    flex: 1 1 auto; min-height: 0;
   }
+  .panel-head { padding: 8px 12px; }
+
+  /* keep the ask box clear of the iPhone home indicator */
+  .ask { padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); }
 
   /* compact overlays (start collapsed via JS) */
   .map-overlay-tr { top: 8px; right: 8px; width: auto; max-width: calc(100% - 70px); }
