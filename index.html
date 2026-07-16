@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JETTRACK // r/ElonJetTracker — OSINT Terminal</title>
+  <meta name="description" content="Open-source intelligence terminal for r/ElonJetTracker. Parody UI — not affiliated with Palantir Technologies." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2310161a'/%3E%3Cpath d='M16 4l3 10h9l-7 6 3 10-8-6-8 6 3-10-7-6h9z' fill='%23e8c547'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="vendor/leaflet/leaflet.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- Faux classification banner -->
+  <div class="class-banner" role="note">
+    UNCLASSIFIED&nbsp;//&nbsp;OPEN SOURCE INTELLIGENCE&nbsp;//&nbsp;r/ELONJETTRACKER&nbsp;//&nbsp;PARODY — NOT AFFILIATED WITH PALANTIR TECHNOLOGIES
+  </div>
+
+  <!-- Top app bar -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="brand">
+        <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 2l2.4 7.4H22l-6 4.4 2.3 7.2L12 16.6 5.7 21l2.3-7.2-6-4.4h7.6z"/>
+        </svg>
+        <span class="brand-name">JETTRACK</span>
+        <span class="brand-sub">AIP&nbsp;Terminal</span>
+      </div>
+      <nav class="tabs" aria-label="Terminal sections">
+        <button class="tab active" data-tab="investigations">Investigations</button>
+        <button class="tab" data-tab="watchlist">G700 Watchlist</button>
+        <button class="tab" data-tab="about">Sub Info</button>
+      </nav>
+    </div>
+    <div class="topbar-right">
+      <span id="data-badge" class="badge badge-mock" title="Data source status">
+        <span class="badge-dot"></span><span id="data-badge-text">CONNECTING…</span>
+      </span>
+      <span class="zulu" id="zulu-clock" aria-label="Current time UTC">--:--:--Z</span>
+      <a class="reddit-link" href="https://www.reddit.com/r/elonjettracker/" target="_blank" rel="noopener">r/ElonJetTracker ↗</a>
+    </div>
+  </header>
+
+  <!-- Main layout -->
+  <main class="layout">
+
+    <!-- Left rail (marketing-frame style) -->
+    <aside class="rail" aria-hidden="true">
+      <div class="rail-top">Area of Interest /</div>
+      <div class="rail-title">TARGET<br/>N628TS<br/>GULFSTREAM<br/>G650ER</div>
+      <div class="rail-bottom">OSINT°</div>
+    </aside>
+
+    <!-- Terminal / feed panel -->
+    <section class="panel terminal" id="pane-investigations">
+      <div class="panel-head">
+        <span class="panel-title">Investigation — Target Aircraft Activity</span>
+        <span class="panel-meta mono" id="feed-status">FEED ACTIVE</span>
+      </div>
+      <div class="feed" id="feed" aria-live="polite"></div>
+      <form class="ask" id="ask-form" autocomplete="off">
+        <input class="ask-input" id="ask-input" type="text"
+               placeholder="Start typing something to explore with AIP…" aria-label="Ask the terminal" />
+        <button class="ask-send" type="submit" aria-label="Send">➤</button>
+      </form>
+    </section>
+
+    <!-- Watchlist pane (hidden by default) -->
+    <section class="panel terminal hidden" id="pane-watchlist">
+      <div class="panel-head">
+        <span class="panel-title">Watchlist — Gulfstream G700 Registry Sweep</span>
+        <span class="panel-meta mono" id="watchlist-count"></span>
+      </div>
+      <div class="watchlist-body">
+        <p class="intel-note">
+          <span class="chip chip-amber">ANALYST NOTE</span>
+          Registry sweep of early G700 airframes (compiled by the sub from the
+          <a href="https://rzjets.net/" target="_blank" rel="noopener">rzjets</a> /
+          <a href="https://registry.faa.gov/aircraftinquiry/" target="_blank" rel="noopener">FAA Aircraft Registry</a>).
+          Only one entity in these databases besides Gulfstream was associated with orders for the model:
+          <strong>Falcon Holdings LLC</strong>, headquartered in Sheridan, WY &amp; Lugano, Switzerland — founded 2021.
+          Only one active “Falcon Holdings LLC” filed LLC Articles of Organization in Wyoming in 2021
+          (per <a href="https://opencorporates.com/" target="_blank" rel="noopener">OpenCorporates</a>;
+          see <a href="https://wyobiz.wyo.gov/" target="_blank" rel="noopener">Wyoming business filing details</a>).
+        </p>
+        <div class="table-scroll">
+          <table class="datatable" id="watchlist-table">
+            <thead>
+              <tr>
+                <th>Reg</th><th>Mode S</th><th>Serial #</th><th>Operator / Contract</th>
+                <th>Built</th><th>Airworthy</th><th>Flag</th>
+              </tr>
+            </thead>
+            <tbody><!-- rendered by app.js --></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sub info pane (hidden by default) -->
+    <section class="panel terminal hidden" id="pane-about">
+      <div class="panel-head">
+        <span class="panel-title">Source Dossier — r/ElonJetTracker</span>
+        <span class="panel-meta mono">COMMUNITY OSINT</span>
+      </div>
+      <div class="about-body">
+        <h3>Aircraft Info</h3>
+        <ul class="link-list">
+          <li>Gulfstream G650ER, Tail# <span class="mono hl">N628TS</span> —
+            <a href="https://opensky-network.org/aircraft-profile?icao24=a835af" target="_blank" rel="noopener">OpenSky Network</a> ·
+            <a href="https://registry.faa.gov/AircraftInquiry/Search/NNumberResult?nNumberTxt=628TS" target="_blank" rel="noopener">FAA Registry</a></li>
+          <li>Photos of N628TS — <a href="https://www.jetphotos.com/registration/N628TS" target="_blank" rel="noopener">JetPhotos</a></li>
+        </ul>
+        <h3>Other Info</h3>
+        <ul class="link-list">
+          <li><a href="https://www.faa.gov/air_traffic/technology/equipadsb/resources/faq" target="_blank" rel="noopener">FAA FAQ about ADS-B</a></li>
+          <li><a href="https://globe.adsbexchange.com/?icao=a835af" target="_blank" rel="noopener">ADS-B Exchange — live globe (icao a835af)</a></li>
+        </ul>
+        <h3>Credits</h3>
+        <p class="fine">
+          Built by the mods of <a href="https://www.reddit.com/r/elonjettracker/" target="_blank" rel="noopener">r/ElonJetTracker</a>.
+          Tracking data courtesy of community ADS-B feeder networks
+          (<a href="https://adsb.lol" target="_blank" rel="noopener">adsb.lol</a>,
+          <a href="https://www.adsbexchange.com/" target="_blank" rel="noopener">ADS-B Exchange</a> contributors).
+          Inspired by the plane-notify bot. This page is a <strong>parody UI</strong> and is not affiliated with,
+          endorsed by, or connected to Palantir Technologies. All data shown is public, open-source information.
+        </p>
+      </div>
+    </section>
+
+    <!-- Map -->
+    <section class="mapwrap">
+      <div id="map" role="application" aria-label="Tactical map"></div>
+
+      <!-- Alert region label overlay (top-right, screenshot-style) -->
+      <div class="map-overlay map-overlay-tr">
+        <div class="overlay-card">
+          <div class="overlay-head">
+            <span class="chip chip-blue">TARGET DOSSIER</span>
+            <span class="mono muted" id="dossier-updated">—</span>
+          </div>
+          <div class="dossier-id">
+            <span class="dossier-reg mono">N628TS</span>
+            <span class="dossier-type">GULFSTREAM G650ER · GLF6 · ICAO <span class="mono">A835AF</span></span>
+          </div>
+          <div class="stat-grid">
+            <div class="stat"><div class="stat-label">Altitude</div><div class="stat-value mono" id="stat-alt">—</div></div>
+            <div class="stat"><div class="stat-label">Ground Spd</div><div class="stat-value mono" id="stat-gs">—</div></div>
+            <div class="stat"><div class="stat-label">Heading</div><div class="stat-value mono" id="stat-hdg">—</div></div>
+            <div class="stat"><div class="stat-label">Squawk</div><div class="stat-value mono" id="stat-squawk">—</div></div>
+            <div class="stat"><div class="stat-label">Position</div><div class="stat-value mono" id="stat-pos">—</div></div>
+            <div class="stat"><div class="stat-label">Source</div><div class="stat-value mono" id="stat-src">—</div></div>
+          </div>
+          <div class="overlay-links">
+            <a href="https://opensky-network.org/aircraft-profile?icao24=a835af" target="_blank" rel="noopener">OpenSky</a>
+            <a href="https://registry.faa.gov/AircraftInquiry/Search/NNumberResult?nNumberTxt=628TS" target="_blank" rel="noopener">FAA Registry</a>
+            <a href="https://www.jetphotos.com/registration/N628TS" target="_blank" rel="noopener">JetPhotos</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom event log strip -->
+      <div class="map-overlay map-overlay-bottom">
+        <div class="eventlog">
+          <div class="eventlog-head">
+            <span class="chip chip-dim">EVENT LOG</span>
+            <span class="mono muted" id="eventlog-mode"></span>
+          </div>
+          <div class="eventlog-rows mono" id="eventlog"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="vendor/leaflet/leaflet.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
