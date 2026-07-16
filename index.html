@@ -44,17 +44,60 @@
     </div>
   </header>
 
-  <!-- Main layout -->
+  <!-- Main layout: full-bleed map with floating panels -->
   <main class="layout">
 
-    <!-- Left rail (marketing-frame style) -->
-    <aside class="rail" aria-hidden="true">
-      <div class="rail-top">Area of Interest /</div>
-      <div class="rail-title">TARGET<br/>N628TS<br/>GULFSTREAM<br/>G650ER</div>
-      <div class="rail-bottom">OSINT°</div>
-    </aside>
+    <!-- Map fills everything -->
+    <section class="mapwrap">
+      <div id="map" role="application" aria-label="Tactical map"></div>
 
-    <!-- Terminal / feed panel -->
+      <!-- Target dossier overlay (top-right) -->
+      <div class="map-overlay map-overlay-tr">
+        <div class="overlay-card">
+          <div class="overlay-head">
+            <span class="chip chip-blue">TARGET DOSSIER</span>
+            <span class="overlay-head-right">
+              <span class="mono muted" id="dossier-updated">—</span>
+              <button class="collapse-btn" id="dossier-toggle" aria-label="Collapse dossier" aria-expanded="true">−</button>
+            </span>
+          </div>
+          <div class="dossier-id">
+            <span class="dossier-reg mono">N628TS</span>
+            <span class="dossier-type">GULFSTREAM G650ER · GLF6 · ICAO <span class="mono">A835AF</span></span>
+          </div>
+          <div class="stat-grid">
+            <div class="stat"><div class="stat-label">Altitude</div><div class="stat-value mono" id="stat-alt">—</div></div>
+            <div class="stat"><div class="stat-label">Ground Spd</div><div class="stat-value mono" id="stat-gs">—</div></div>
+            <div class="stat"><div class="stat-label">Heading</div><div class="stat-value mono" id="stat-hdg">—</div></div>
+            <div class="stat"><div class="stat-label">Squawk</div><div class="stat-value mono" id="stat-squawk">—</div></div>
+            <div class="stat"><div class="stat-label">Position</div><div class="stat-value mono" id="stat-pos">—</div></div>
+            <div class="stat"><div class="stat-label">Source</div><div class="stat-value mono" id="stat-src">—</div></div>
+          </div>
+          <div class="overlay-links">
+            <a href="https://opensky-network.org/aircraft-profile?icao24=a835af" target="_blank" rel="noopener">OpenSky</a>
+            <a href="https://registry.faa.gov/AircraftInquiry/Search/NNumberResult?nNumberTxt=628TS" target="_blank" rel="noopener">FAA Registry</a>
+            <a href="https://www.jetphotos.com/registration/N628TS" target="_blank" rel="noopener">JetPhotos</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Floating event log strip -->
+      <div class="map-overlay map-overlay-bottom">
+        <div class="eventlog">
+          <div class="eventlog-head">
+            <span class="chip chip-dim">EVENT LOG</span>
+            <span class="overlay-head-right">
+              <span class="mono muted" id="map-coords"></span>
+              <span class="mono muted" id="eventlog-mode"></span>
+              <button class="collapse-btn" id="eventlog-toggle" aria-label="Collapse event log" aria-expanded="true">−</button>
+            </span>
+          </div>
+          <div class="eventlog-rows mono" id="eventlog"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Terminal / feed panel (floating glass panel / mobile bottom sheet) -->
     <section class="panel terminal" id="pane-investigations">
       <div class="panel-head">
         <span class="panel-title">Investigation — Target Aircraft Activity</span>
@@ -131,54 +174,6 @@
       </div>
     </section>
 
-    <!-- Map -->
-    <section class="mapwrap">
-      <div id="map" role="application" aria-label="Tactical map"></div>
-
-      <!-- Alert region label overlay (top-right, screenshot-style) -->
-      <div class="map-overlay map-overlay-tr">
-        <div class="overlay-card">
-          <div class="overlay-head">
-            <span class="chip chip-blue">TARGET DOSSIER</span>
-            <span class="overlay-head-right">
-              <span class="mono muted" id="dossier-updated">—</span>
-              <button class="collapse-btn" id="dossier-toggle" aria-label="Collapse dossier" aria-expanded="true">−</button>
-            </span>
-          </div>
-          <div class="dossier-id">
-            <span class="dossier-reg mono">N628TS</span>
-            <span class="dossier-type">GULFSTREAM G650ER · GLF6 · ICAO <span class="mono">A835AF</span></span>
-          </div>
-          <div class="stat-grid">
-            <div class="stat"><div class="stat-label">Altitude</div><div class="stat-value mono" id="stat-alt">—</div></div>
-            <div class="stat"><div class="stat-label">Ground Spd</div><div class="stat-value mono" id="stat-gs">—</div></div>
-            <div class="stat"><div class="stat-label">Heading</div><div class="stat-value mono" id="stat-hdg">—</div></div>
-            <div class="stat"><div class="stat-label">Squawk</div><div class="stat-value mono" id="stat-squawk">—</div></div>
-            <div class="stat"><div class="stat-label">Position</div><div class="stat-value mono" id="stat-pos">—</div></div>
-            <div class="stat"><div class="stat-label">Source</div><div class="stat-value mono" id="stat-src">—</div></div>
-          </div>
-          <div class="overlay-links">
-            <a href="https://opensky-network.org/aircraft-profile?icao24=a835af" target="_blank" rel="noopener">OpenSky</a>
-            <a href="https://registry.faa.gov/AircraftInquiry/Search/NNumberResult?nNumberTxt=628TS" target="_blank" rel="noopener">FAA Registry</a>
-            <a href="https://www.jetphotos.com/registration/N628TS" target="_blank" rel="noopener">JetPhotos</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Bottom event log strip -->
-      <div class="map-overlay map-overlay-bottom">
-        <div class="eventlog">
-          <div class="eventlog-head">
-            <span class="chip chip-dim">EVENT LOG</span>
-            <span class="overlay-head-right">
-              <span class="mono muted" id="eventlog-mode"></span>
-              <button class="collapse-btn" id="eventlog-toggle" aria-label="Collapse event log" aria-expanded="true">−</button>
-            </span>
-          </div>
-          <div class="eventlog-rows mono" id="eventlog"></div>
-        </div>
-      </div>
-    </section>
   </main>
 
   <script src="vendor/leaflet/leaflet.js"></script>
